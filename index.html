@@ -30,47 +30,30 @@
 
     <script>
 async function register() {
-    const username = document.getElementById('user').value;
-    const robloxNick = document.getElementById('roblox').value;
-    const email = document.getElementById('email').value;
-    const password = document.getElementById('pass').value;
-    const error = document.getElementById('error-msg');
-
-    error.style.display = "none";
-
-    // Базовая валидация
-    if (!username || !robloxNick || !email || !password) {
-        error.innerText = "Fill all fields!";
-        error.style.display = "block";
-        return;
-    }
-
-    if (password.length < 8) {
-        error.innerText = "Password must be 8+ symbols!";
-        error.style.display = "block";
-        return;
-    }
+    const errorMsg = document.getElementById('error-msg');
 
     try {
-        // Шлем запрос ТОЛЬКО на свой воркер
         const res = await fetch('https://artlyapi.egoriscool132.workers.dev/api/register', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ username, robloxNick, email, password })
         });
 
-        const data = await res.json();
+        const data = await res.json(); // Читаем JSON от сервера
 
         if (res.ok) {
-            alert("Success! Account linked to: " + robloxNick);
-            window.location.href = "https://artly-swart.vercel.app/account"; // Перекидываем в ЛК
+            alert("Success!");
+            // window.location.href = "...";
         } else {
-            error.innerText = data.error;
-            error.style.display = "block";
+            // ВЫВОДИМ РЕАЛЬНУЮ ПРИЧИНУ
+            console.log("Server rejected:", data.error);
+            errorMsg.innerText = data.error;
+            errorMsg.style.display = "block";
         }
     } catch (e) {
-        error.innerText = "Connection error!";
-        error.style.display = "block";
+        console.error("Fetch error:", e);
+        errorMsg.innerText = "Check your internet or Worker status";
+        errorMsg.style.display = "block";
     }
 }
     </script>
