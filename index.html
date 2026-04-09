@@ -53,7 +53,7 @@ async function register() {
 
     try {
         // Шлем запрос ТОЛЬКО на свой воркер
-        const res = await fetch('https://ТВОЙ-WORKER.workers.dev/api/register', {
+        const res = await fetch('https://artlyapi.egoriscool132.workers.dev/api/register', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ username, robloxNick, email, password })
