@@ -19,8 +19,7 @@
         <h2 style="margin-bottom: 5px;">Create Account</h2>
         <p style="color: #444; font-size: 14px; margin-bottom: 25px;">Join the Artly Hub community</p>
         
-        <input type="text" id="user" placeholder="Username (Display Name)">
-        <input type="text" id="roblox" placeholder="Roblox Nickname">
+        <input type="text" id="user" placeholder="Username">
         <input type="email" id="email" placeholder="Email Address">
         <input type="password" id="pass" placeholder="Password (Min 8 symbols)">
         <div id="error-msg" class="error"></div>
@@ -30,58 +29,38 @@
 
     <script>
 async function register() {
-    // 1. Сначала ОБЯЗАТЕЛЬНО объявляем все переменные
-    const username = document.getElementById('user').value;
-    let robloxNick = document.getElementById('roblox').value;
-    const email = document.getElementById('email').value;
+    const username = document.getElementById('user').value.trim();
+    const email = document.getElementById('email').value.trim();
     const password = document.getElementById('pass').value;
     const errorMsg = document.getElementById('error-msg');
 
-    // Скрываем ошибку перед новой попыткой
-    errorMsg.style.display = "none";
-
-    // 2. Очищаем ник от @ и пробелов
-    robloxNick = robloxNick.replace('@', '').trim();
-
-    // 3. Базовая проверка полей
-    if (!username || !robloxNick || !email || !password) {
+    if (!username || !email || !password) {
         errorMsg.innerText = "Fill all fields!";
         errorMsg.style.display = "block";
         return;
     }
 
     try {
-        // 4. Отправляем запрос на Worker
-        // ЗАМЕНИ URL НА СВОЙ РЕАЛЬНЫЙ
         const res = await fetch('https://artlyapi.egoriscool132.workers.dev/api/register', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ 
-                username: username, 
-                robloxNick: robloxNick, 
-                email: email, 
-                password: password 
-            })
+            body: JSON.stringify({ username, email, password })
         });
 
         const data = await res.json();
 
         if (res.ok) {
-            alert("Registration successful! Welcome, " + username);
-            // После успеха можно перекинуть на страницу входа или аккаунта
-            window.location.href = "https://artly-swart.vercel.app/account"; 
+            alert("Account created! Now open Artly Hub.");
+            window.location.href = "https://artly-swart.vercel.app/account";
         } else {
-            // Если сервер вернул ошибку (например, ник не найден)
             errorMsg.innerText = data.error;
             errorMsg.style.display = "block";
         }
     } catch (e) {
-        // Если вообще нет связи с сервером
-        console.error("Full error details:", e);
-        errorMsg.innerText = "API Connection Error. Check console.";
+        errorMsg.innerText = "Server error!";
         errorMsg.style.display = "block";
     }
-} 
+}
     </script>
 </body>
 </html>
