@@ -1,43 +1,65 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Сайт временно недоступен</title>
+    <title>Artly | Auth Portal</title>
     <style>
-        body {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            margin: 0;
-            background-color: #f0f2f5;
-            font-family: Arial, sans-serif;
-        }
-        .closed-badge {
-            background-color: white;
-            padding: 40px;
-            border-radius: 12px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-            text-align: center;
-            border: 2px solid #ff4d4f;
-        }
-        h1 {
-            color: #ff4d4f;
-            margin-top: 0;
-        }
-        p {
-            color: #555;
-            font-size: 18px;
-        }
+        body { background: #050505; color: white; font-family: 'Segoe UI', sans-serif; display: flex; align-items: center; justify-content: center; height: 100vh; margin: 0; overflow: hidden; }
+        .auth-card { background: #0a0a0a; padding: 40px; border-radius: 30px; border: 1px solid #1843de; width: 380px; text-align: center; box-shadow: 0 0 50px rgba(24, 67, 222, 0.2); animation: slideUp 1s ease; }
+        @keyframes slideUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+        input { width: 100%; padding: 12px; margin: 10px 0; background: #111; border: 1px solid #222; border-radius: 12px; color: white; outline: none; transition: 0.3s; }
+        input:focus { border-color: #1843de; box-shadow: 0 0 10px rgba(24, 67, 222, 0.3); }
+        button { width: 100%; padding: 14px; background: #1843de; border: none; border-radius: 12px; color: white; font-weight: bold; cursor: pointer; margin-top: 20px; transition: 0.3s; }
+        button:hover { transform: scale(1.02); filter: brightness(1.2); }
+        .error { color: #ff4d4d; font-size: 12px; margin-top: 5px; display: none; }
     </style>
 </head>
 <body>
-
-    <div class="closed-badge">
-        <h1>SITE IS CLOSED</h1>
-        <p>Извините, мы проводим технические работы.</p>
-        <p>Пожалуйста, зайдите позже.</p>
+    <div class="auth-card">
+        <h2 style="margin-bottom: 5px;">Create Account</h2>
+        <p style="color: #444; font-size: 14px; margin-bottom: 25px;">Join the Artly Hub community</p>
+        
+        <input type="text" id="user" placeholder="Username (Display Name)">
+        <input type="text" id="roblox" placeholder="Roblox Nickname">
+        <input type="email" id="email" placeholder="Email Address">
+        <input type="password" id="pass" placeholder="Password (Min 8 symbols)">
+        <div id="error-msg" class="error"></div>
+        
+        <button onclick="register()">REGISTER</button>
     </div>
 
+    <script>
+        async function register() {
+            const username = document.getElementById('user').value;
+            const robloxNick = document.getElementById('roblox').value;
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('pass').value;
+            const error = document.getElementById('error-msg');
+
+            // ВАЛИДАЦИЯ
+            if (password.length < 8) { error.innerText = "Password too short!"; error.style.display="block"; return; }
+            if (!email.includes('@')) { error.innerText = "Invalid email!"; error.style.display="block"; return; }
+
+            // ПРОВЕРКА РОБЛОКС НИКА
+            const robloxCheck = await fetch(`https://users.roblox.com/v1/users/search?keyword=${robloxNick}&limit=1`);
+            const robloxJson = await robloxCheck.json();
+            if (!robloxJson.data || robloxJson.data.length === 0) {
+                error.innerText = "Roblox user not found!"; error.style.display="block"; return;
+            }
+
+            // ОТПРАВКА НА WORKER
+            const res = await fetch('https://artlyapi.egoriscool132.workers.dev/api/register', {
+                method: 'POST',
+                body: JSON.stringify({ username, robloxNick, email, password })
+            });
+
+            if (res.ok) {
+                alert("Registration successful! You can now log in via the app.");
+            } else {
+                const data = await res.json();
+                error.innerText = data.error; error.style.display="block";
+            }
+        }
+    </script>
 </body>
 </html>
