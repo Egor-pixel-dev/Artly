@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Artly </title>
+    <title>Artly Auth Portal</title>
     <style>
         body { background: #050505; color: white; font-family: 'Segoe UI', sans-serif; display: flex; align-items: center; justify-content: center; height: 100vh; margin: 0; overflow: hidden; }
         .auth-card { background: #0a0a0a; padding: 40px; border-radius: 30px; border: 1px solid #1843de; width: 380px; text-align: center; box-shadow: 0 0 50px rgba(24, 67, 222, 0.2); animation: slideUp 1s ease; }
@@ -29,37 +29,50 @@
     </div>
 
     <script>
-        async function register() {
-            const username = document.getElementById('user').value;
-            const robloxNick = document.getElementById('roblox').value;
-            const email = document.getElementById('email').value;
-            const password = document.getElementById('pass').value;
-            const error = document.getElementById('error-msg');
+async function register() {
+    const username = document.getElementById('user').value;
+    const robloxNick = document.getElementById('roblox').value;
+    const email = document.getElementById('email').value;
+    const password = document.getElementById('pass').value;
+    const error = document.getElementById('error-msg');
 
-            // ВАЛИДАЦИЯ
-            if (password.length < 8) { error.innerText = "Password too short!"; error.style.display="block"; return; }
-            if (!email.includes('@')) { error.innerText = "Invalid email!"; error.style.display="block"; return; }
+    error.style.display = "none";
 
-            // ПРОВЕРКА РОБЛОКС НИКА
-            const robloxCheck = await fetch(`https://users.roblox.com/v1/users/search?keyword=${robloxNick}&limit=1`);
-            const robloxJson = await robloxCheck.json();
-            if (!robloxJson.data || robloxJson.data.length === 0) {
-                error.innerText = "Roblox user not found!"; error.style.display="block"; return;
-            }
+    // Базовая валидация
+    if (!username || !robloxNick || !email || !password) {
+        error.innerText = "Fill all fields!";
+        error.style.display = "block";
+        return;
+    }
 
-            // ОТПРАВКА НА WORKER
-            const res = await fetch('https://artlyapi.egoriscool132.workers.dev/api/register', {
-                method: 'POST',
-                body: JSON.stringify({ username, robloxNick, email, password })
-            });
+    if (password.length < 8) {
+        error.innerText = "Password must be 8+ symbols!";
+        error.style.display = "block";
+        return;
+    }
 
-            if (res.ok) {
-                alert("Registration successful! You can now log in via the app.");
-            } else {
-                const data = await res.json();
-                error.innerText = data.error; error.style.display="block";
-            }
+    try {
+        // Шлем запрос ТОЛЬКО на свой воркер
+        const res = await fetch('https://ТВОЙ-WORKER.workers.dev/api/register', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ username, robloxNick, email, password })
+        });
+
+        const data = await res.json();
+
+        if (res.ok) {
+            alert("Success! Account linked to: " + robloxNick);
+            window.location.href = "https://artly-swart.vercel.app/account"; // Перекидываем в ЛК
+        } else {
+            error.innerText = data.error;
+            error.style.display = "block";
         }
+    } catch (e) {
+        error.innerText = "Connection error!";
+        error.style.display = "block";
+    }
+}
     </script>
 </body>
 </html>
