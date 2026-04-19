@@ -5,12 +5,12 @@ local MainURL = "https://raw.githubusercontent.com/Egor-pixel-dev/Artly/refs/hea
 
 -- Списки ID для сверки
 local Lobbies = {
-    [4139766490] = "IWTTG Lobby",   -- Твой ID лобби IWTTG
+    [11684369582] = "IWTTG Lobby",   -- Твой ID лобби IWTTG
     [6516141723] = "DOORS Lobby"    -- Лобби Дорса
 }
 
 local Games = {
-    [11684369582] = "IWTTG Game",
+    [4139766490] = "IWTTG Game",
     [103066657869726] = "Build & Survive",
     -- Для Дорса (когда зашел в саму игру) ID меняется, добавь его сюда:
     [0000000000] = "DOORS Game" 
