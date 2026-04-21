@@ -1,47 +1,54 @@
--- [[ Artly Hub: Universal Loader ]] --
+-- [[ Artly Hub: Advanced Universal Loader ]] --
 
 local PlaceId = game.PlaceId
-local MainURL = "https://raw.githubusercontent.com/Egor-pixel-dev/Artly/refs/heads/main/"
+local StarterGui = game:GetService("StarterGui")
 
--- Списки ID для сверки
-local Lobbies = {
-    [11684369582] = "IWTTG Lobby",   -- Твой ID лобби IWTTG
-    [6516141723] = "DOORS Lobby"    -- Лобби Дорса
+-- 1. СПИСОК ЛОББИ (Сюда пишем ID, где просто уведомление)
+local LobbyList = {
+    [11684369582] = "IWTTG Lobby",
+    [6516141723] = "Doors Lobby"
 }
 
-local Games = {
-    [4139766490] = "IWTTG Game",
+-- 2. СПИСОК ИГР (Сюда пишем ID, где должен грузиться чит)
+local GameList = {
     [103066657869726] = "Build & Survive",
-    -- Для Дорса (когда зашел в саму игру) ID меняется, добавь его сюда:
-    [0000000000] = "DOORS Game" 
+    [4139766490] = "IWTTG Game",
+    [6833009714] = "Doors Game" -- Замени на реальный ID игры Doors
 }
 
--- Функция уведомления
-local function Notify(title, msg)
-    game:GetService("StarterGui"):SetCore("SendNotification", {
+local function Notify(title, text)
+    StarterGui:SetCore("SendNotification", {
         Title = title,
-        Text = msg,
+        Text = text,
         Duration = 5
     })
 end
 
--- ЛОГИКА ПРОВЕРКИ
-if Lobbies[PlaceId] then
-    -- Если мы в лобби
+-- Основная логика проверки
+local isLobby = LobbyList[PlaceId]
+local isGame = GameList[PlaceId]
+
+if isLobby then
     _game = "lobby"
-    Notify("Artly Hub", "Joined Game Lobby: " .. Lobbies[PlaceId])
-    print("Artly Hub | Detected Lobby")
-
-elseif Games[PlaceId] then
-    -- Если мы в основной игре
-    _game = Games[PlaceId]
-    Notify("Artly Hub", "Loading script for " .. _game)
-    
-    -- Загружаем основной чит по PlaceId (как у тебя была задумка)
-    loadstring(game:HttpGet(MainURL .. PlaceId .. ".lua"))()
-
+    Notify("Artly Hub", "Joined Lobby: " .. isLobby)
+elseif isGame then
+    _game = isGame
+    Notify("Artly Hub", "Game Detected! Loading script...")
+    -- Загружаем основной скрипт по ID
+    loadstring(game:HttpGet("https://raw.githubusercontent.com/Egor-pixel-dev/Artly/refs/heads/main/" .. PlaceId .. ".lua"))()
 else
-    -- Если зашел в левую игру
-    Notify("Artly Hub Error", "Wrong Game! This game is not supported.")
-    warn("Artly Hub | Unauthorized Game ID: " .. PlaceId)
+    Notify("Artly Hub", "Wrong Game! ID: " .. PlaceId)
+    return
+end
+
+-- МАГИЯ ДЛЯ ПЕРЕЗАПУСКА (queue_on_teleport)
+-- Этот кусок заставляет лоадер запускаться заново после телепорта
+local teleportCode = [[
+    loadstring(game:HttpGet("https://raw.githubusercontent.com/Egor-pixel-dev/Artly/refs/heads/main/loader.lua"))()
+]]
+
+local queue_on_teleport = (syn and syn.queue_on_teleport) or (fluxus and fluxus.queue_on_teleport) or queue_on_teleport
+
+if queue_on_teleport then
+    queue_on_teleport(teleportCode)
 end
