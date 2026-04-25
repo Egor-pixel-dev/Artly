@@ -12,7 +12,7 @@ local LobbyList = {
 -- 2. СПИСОК ИГР (Сюда пишем ID, где должен грузиться чит)
 local GameList = {
     [103066657869726] = "Build & Survive",
-    [4139766490] = "IWTTG Game",
+    [18468631822] = "IWTTG Game",
     [6833009714] = "Doors Game" -- Замени на реальный ID игры Doors
 }
 
