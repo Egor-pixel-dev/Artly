@@ -37,7 +37,7 @@ elseif isGame then
     -- Загружаем основной скрипт по ID
     loadstring(game:HttpGet("https://raw.githubusercontent.com/Egor-pixel-dev/Artly/refs/heads/main/" .. PlaceId .. ".lua"))()
 else
-    Notify("Artly Hub", "Wrong Game!)
+    Notify("Artly Hub", "Wrong Game!")
     return
 end
 
