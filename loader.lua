@@ -30,14 +30,14 @@ local isGame = GameList[PlaceId]
 
 if isLobby then
     _game = "lobby"
-    Notify("Artly Hub", "Joined Lobby: " .. isLobby)
+    Notify("Artly Hub", "Join A Game")
 elseif isGame then
     _game = isGame
-    Notify("Artly Hub", "Game Detected! Loading script...")
+    Notify("Artly Hub", "Loading script...")
     -- Загружаем основной скрипт по ID
     loadstring(game:HttpGet("https://raw.githubusercontent.com/Egor-pixel-dev/Artly/refs/heads/main/" .. PlaceId .. ".lua"))()
 else
-    Notify("Artly Hub", "Wrong Game! ID: " .. PlaceId)
+    Notify("Artly Hub", "Wrong Game!)
     return
 end
 
