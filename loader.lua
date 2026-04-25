@@ -30,7 +30,7 @@ local isGame = GameList[PlaceId]
 
 if isLobby then
     _game = "lobby"
-    Notify("Artly Hub", "Join A Game")
+    Notify("Artly Hub", "Join A Game!")
 elseif isGame then
     _game = isGame
     Notify("Artly Hub", "Loading script...")
